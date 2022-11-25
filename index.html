@@ -1,0 +1,96 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CSS only : BOOTSTRAP-->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <!-- JS including all : bundle  we can include it in body tag just before closing body tag-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+    <!-- Adding Jquery externally since bootstrap 5 dropped it -->
+    <script src="/jquery-3.6.1.min.js"></script>
+    
+    <!-- Adding socket.io-client for browser side -->
+    <script src="/socket.io/socket.io.js"></script>
+
+
+    <title>Nexus</title>
+
+</head>
+            
+<body>
+    <div class="container">
+        <br>
+        <div class="bg-warning bg-opacity-75 text-dark p-5 mt-2 border border-dark border-3 rounded-5">
+            <h1 class="display-5"> Make a bond...</h1>
+            <input class="form-control border-danger border-3" type="text" placeholder="Your Good Name.." id="Name">
+            <br>
+            <textarea class="form-control border-danger border-3" type="text" placeholder="Your Message.." id="Message"></textarea> <!--textarea allows multiple line input-->
+            <br>
+            <button id="send" type="button" class="btn btn-success"> Convey </button>
+        </div>
+
+        <!-- TO save History of Messages -->
+        <div id="prevMessages" class="pt-5" > <!-- prevMessages=messages -->
+            <h3 class="text-dark text-opacity-50"> Your Chats...</h3>
+
+        </div>
+
+
+    </div>
+    <script>
+        // Adding jQuery;   
+
+        //setting socket.io-client side library after adding external link in head tag
+        var socket = io() // this exposes the external link and connect
+
+        $(()=>{
+            
+            // message on clicking the convey button
+            $("#send").click(function(){  //$().on('click',fun(){}) ,this is also correct
+                // addMessage({name: "Kshitij", message:"Hello World"}) 
+                
+                //we are changing the action on click 
+                //we want to retain the old messages
+                var msg = {name: $("#Name").val() , message: $("#Message").val()}
+                postMessage(msg) // use this method to post messages to url
+                
+            })
+
+            //conti...get messages service
+            getMessages()
+        });
+
+        //frontend of emitting messges to all client - event listner
+        socket.on('messageee', addMessage, function(){
+            location.reload()
+        })
+
+
+        function addMessage(msg){
+            $("#prevMessages").append(`<h5> ${msg.name} </h5> <p> ${msg.message} </p>`)
+            
+        }
+
+        // creating get meassages service
+        function getMessages(){
+            // create http get requset
+            $.get('/messages', function(data){
+                //console.log(data) // this will show the messages on the current page console
+                data.forEach(addMessage); // for each from data add that to the currecnt page 
+                                           // already made funtion 'addMessage'
+            })
+           
+           
+        }
+
+        function postMessage(msg){
+            $.post('/messages', msg)
+        }
+
+
+
+    </script>
+</body>
+
+</html>
