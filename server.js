@@ -33,10 +33,10 @@ const userSchema = new mongoose.Schema({
 const Message = mongoose.model("Message", userSchema)
 
 //placeholder messages list, two objects
-var messages =[
-    {name: "Kshitij", message: "I am Kshitij"},
-    {name: "xiTiz", message:"This is xiTiz"}
-]
+// var messages =[
+//     {name: "Kshitij", message: "I am Kshitij"},
+//     {name: "xiTiz", message:"This is xiTiz"}
+// ]
 
 //add route for end point which is messages, app.get for adding route
 app.get('/messages', function(req,res){
